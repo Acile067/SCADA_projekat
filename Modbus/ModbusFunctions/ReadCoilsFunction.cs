@@ -24,8 +24,17 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc/>
         public override byte[] PackRequest()
         {
-            //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            byte[] paket = new byte[12];
+
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)CommandParameters.TransactionId)), 0, paket, 0, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)CommandParameters.ProtocolId)), 0, paket, 2, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)CommandParameters.Length)), 0, paket, 4, 2);
+            paket[6] = CommandParameters.UnitId;
+            paket[7] = CommandParameters.FunctionCode;
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)((ModbusReadCommandParameters)CommandParameters).StartAddress)), 0, paket, 8, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)((ModbusReadCommandParameters)CommandParameters).Quantity)), 0, paket, 10, 2);
+
+            return paket;
         }
 
         /// <inheritdoc />
