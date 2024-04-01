@@ -40,8 +40,26 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc />
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
-            //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            var ret = new Dictionary<Tuple<PointType, ushort>, ushort>();
+
+            if (response[7] == CommandParameters.FunctionCode + 0x80)   //provera da li je doslo do greske
+            {
+                HandeException(response[8]);
+            }
+            else
+            {
+                ushort adresa = ((ModbusReadCommandParameters)CommandParameters).StartAddress;  //startna adresa
+                ushort value;   //ovde ce uvek biti vrednost
+                for (int i = 0; i < response[8]; i = i + 2) //response[8] -> byteCount tj. koliko imamo bajtova u delu koji nosi vrednosti signala
+                { //i se uvecava za dva jer preuzimamo short vrednosti
+                    value = BitConverter.ToUInt16(response, (i + 9));   //prva vrednost
+                    value = (ushort)IPAddress.NetworkToHostOrder((short)value); //prebacivanje u host order
+                    ret.Add(new Tuple<PointType, ushort>(PointType.ANALOG_OUTPUT, adresa), value); //cuvanje
+                    adresa++;
+                }
+            }
+
+            return ret;
         }
     }
 }
