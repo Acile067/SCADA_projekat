@@ -1,0 +1,8 @@
+STA 124
+TCP 60031
+
+
+IN_REG	3 2200	0  0   4095  2000  AI  @Senzor 4
+DI_REG  1 2400  0  0      1     0  DI  @AlarmZaVodu 2
+HR_INT  2 3500  0  0   4095  1200  AO  @Regulacija 4
+DO_REG  2 4700  0  0      1     0  DO  @UkIskSvetla 2
